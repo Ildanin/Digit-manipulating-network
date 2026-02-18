@@ -1,7 +1,6 @@
-from random import randint
 from matplotlib import pyplot
 import numpy as np
-from network import Network, load, compare_networks, random_array, add_noise, apply_threshold
+from network import Network, load, add_noise, apply_threshold, random_array
 from time import perf_counter
 
 def data_transform(num: int) -> list:
