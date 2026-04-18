@@ -22,7 +22,7 @@ net.save(f'recognizers/{round(100 * accuracy, 2)}.txt')
 inp = ''
 while inp != 'stop':
     inp = input()
-    if inp == 'stop' and inp == '':
+    if inp == 'stop' or inp == '':
         continue
     if inp.split()[0] == 'train':
         if len(inp.split()) == 4:
