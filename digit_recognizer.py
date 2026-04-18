@@ -1,37 +1,7 @@
 from random import randint
 from matplotlib import pyplot
-import numpy as np
 from network import Network, load, random_array
-from time import perf_counter
-
-def data_transform(num: int) -> list:
-    transformed_data = [0 for _ in range(10)]
-    transformed_data[num] = 1
-    return(transformed_data)
-
-def load_data(filename: str, ) -> tuple[list[np.ndarray], list[np.ndarray]]:
-    t1 = perf_counter()
-    file_x: list[np.ndarray] = []
-    file_y: list[np.ndarray] = []
-    file = open(filename)
-    for line in file:
-        data = [int(x) for x in line.split(',')]
-        file_x.append(np.array(data[1:]) / 255)
-        file_y.append(np.array(data_transform(data[0])))
-    file.close()
-    t2 = perf_counter()
-    print(f"{filename} loaded in {round(t2-t1, 3)} seconds")
-    return(file_x, file_y)
-
-def test(network: Network, dataset: list[np.ndarray], answerset: list[np.ndarray]) -> tuple[float, float]:
-    data_size = min(len(dataset), len(answerset))
-    score = 0
-    cost = 0
-    for data, answer in zip(dataset, answerset):
-        if net.process(data).argmax() == answer.argmax():
-            score += 1
-        cost += network.cost(answer)
-    return(score / data_size, cost / data_size)
+from utiles import load_data, test_recognizer
 
 train_x, train_y = load_data("mnist_train.csv")
 test_x, test_y = load_data("mnist_test.csv")
@@ -45,7 +15,7 @@ beta = 0.3
 
 net.train_stochastic_momentum(train_x, train_y, alpha, beta, 60000, 10, True)
 
-accuracy, avg_cost = test(net, test_x, test_y)
+accuracy, avg_cost = test_recognizer(net, test_x, test_y)
 print(f'Accuracy: {round(100 * accuracy, 2)}% | Cost {round(avg_cost, 3)}')
 net.save(f'recognizers/{round(100 * accuracy, 2)}.txt')
 
@@ -61,10 +31,10 @@ while inp != 'stop':
         else:
             print(f'Train takes 3 arguments, but {len(inp.split())-1} was given')
     elif inp == 'test':
-        accuracy, avg_cost = test(net, test_x, test_y)
+        accuracy, avg_cost = test_recognizer(net, test_x, test_y)
         print(f'Accuracy: {round(100 * accuracy, 2)}% | Cost: {round(avg_cost, 3)}')
     elif inp.split()[0] == 'save':
-        accuracy, avg_cost = test(net, test_x, test_y)
+        accuracy, avg_cost = test_recognizer(net, test_x, test_y)
         net.save(f'recognizers/{round(100 * accuracy, 2)}.txt')
     elif all(char in 'q' for char in inp):
         for _ in range(len(inp)):

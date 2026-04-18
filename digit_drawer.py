@@ -1,34 +1,7 @@
 from matplotlib import pyplot
 import numpy as np
 from network import Network, load, add_noise, apply_threshold, random_array
-from time import perf_counter
-
-def data_transform(num: int) -> list:
-    transformed_data = [0 for _ in range(10)]
-    transformed_data[num] = 1
-    return(transformed_data)
-
-def load_data(filename: str) -> tuple[list[np.ndarray], list[np.ndarray]]:
-    t1 = perf_counter()
-    file_x: list[np.ndarray] = []
-    file_y: list[np.ndarray] = []
-    file = open(filename)
-    for line in file:
-        data = [int(x) for x in line.split(',')]
-        file_x.append(np.array(data[1:]) / 255)
-        file_y.append(np.array(data_transform(data[0])))
-    file.close()
-    t2 = perf_counter()
-    print(f"{filename} loaded in {round(t2-t1, 3)} seconds")
-    return(file_x, file_y)
-
-def test(network: Network, dataset: list[np.ndarray], answerset: list[np.ndarray]) -> float:
-    data_size = min(len(dataset), len(answerset))
-    cost = 0
-    for data, answer in zip(dataset, answerset):
-        network.process(data)
-        cost += network.cost(answer)
-    return(cost / data_size)
+from utiles import load_data, test_drawer, data_transform
 
 def get_digit(network: Network, data: np.ndarray, noise_range: tuple[float, float], threshold: float) -> np.ndarray:
     return(apply_threshold(network.process(add_noise(data, noise_range)), threshold).reshape(28, 28))
@@ -48,7 +21,7 @@ threshold = 0.3
 
 net.train_stochastic_momentum(train_y, train_x, alpha, beta, 200, 60, True)
 
-avg_cost = test(net, test_y, test_x)
+avg_cost = test_drawer(net, test_y, test_x)
 print(f'Cost {round(avg_cost, 3)}')
 net.save(f"drawers/{round(100*avg_cost, 2)}.txt")
 
@@ -64,10 +37,10 @@ while inp != 'stop':
         else:
             print(f'Train takes 3 arguments, but {len(inp.split())-1} was given')
     elif inp == 'test':
-        avg_cost = test(net, test_y, test_x)
+        avg_cost = test_drawer(net, test_y, test_x)
         print(f'Cost: {round(avg_cost, 3)}')
     elif inp.split()[0] == 'save':
-        avg_cost = test(net, test_y, test_x)
+        avg_cost = test_drawer(net, test_y, test_x)
         net.save(f'drawers/{round(avg_cost, 3)}.txt')
         print(f'Saved as {round(avg_cost, 3)} in drawers')
     elif all(char in 'q' for char in inp):
