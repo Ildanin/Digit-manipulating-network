@@ -1,6 +1,6 @@
 import numpy as np
 from time import perf_counter
-from network import Network
+from network import Network, Dataset
 from os import path
 
 digits_dir = path.dirname(__file__)
@@ -24,20 +24,18 @@ def load_data(filename: str) -> tuple[list[np.ndarray], list[np.ndarray]]:
     print(f"{filename} loaded in {round(t2-t1, 3)} seconds")
     return(file_x, file_y)
 
-def test_recognizer(network: Network, dataset: list[np.ndarray], answerset: list[np.ndarray]) -> tuple[float, float]:
-    data_size = min(len(dataset), len(answerset))
+def test_recognizer(network: Network, dataset: Dataset) -> tuple[float, float]:
     score = 0
     cost = 0
-    for data, answer in zip(dataset, answerset):
-        if network.process(data).argmax() == answer.argmax():
+    for sample in dataset:
+        if network.process(sample.input_value).argmax() == sample.output_value.argmax():
             score += 1
-        cost += network.cost(answer)
-    return(score / data_size, cost / data_size)
+        cost += network.unaverage_cost(sample.output_value)
+    return(score / len(dataset), cost / len(dataset))
 
-def test_drawer(network: Network, dataset: list[np.ndarray], answerset: list[np.ndarray]) -> float:
-    data_size = min(len(dataset), len(answerset))
+def test_drawer(network: Network, dataset: Dataset) -> float:
     cost = 0
-    for data, answer in zip(dataset, answerset):
-        network.process(data)
-        cost += network.cost(answer)
-    return(cost / data_size)
+    for sample in dataset:
+        network.process(sample.input_value)
+        cost += network.unaverage_cost(sample.output_value)
+    return(cost / len(dataset))
