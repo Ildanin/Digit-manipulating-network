@@ -1,6 +1,9 @@
 import numpy as np
 from time import perf_counter
 from network import Network
+from os import path
+
+digits_dir = path.dirname(__file__)
 
 def data_transform(num: int) -> list:
     transformed_data = [0 for _ in range(10)]
@@ -11,7 +14,7 @@ def load_data(filename: str) -> tuple[list[np.ndarray], list[np.ndarray]]:
     t1 = perf_counter()
     file_x: list[np.ndarray] = []
     file_y: list[np.ndarray] = []
-    file = open(filename)
+    file = open(path.join(digits_dir, filename))
     for line in file:
         data = [int(x) for x in line.split(',')]
         file_x.append(np.array(data[1:]) / 255)
