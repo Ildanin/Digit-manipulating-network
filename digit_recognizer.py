@@ -7,22 +7,20 @@ from os import path
 #train = Dataset(*load_data("mnist_train.csv"))
 test = Dataset(*load_data("mnist_test.csv"))
 
-#net = Network([784, 64, 10], 'L_ReLU', factor_range=(-0.1, 0.1), bias_range=(-0.1, 0.1))
+net = Network([784, 64, 10], 'L_ReLU', weight_range=(-0.1, 0.1), bias_range=(-0.1, 0.1))
 
-net = load(path.join(digits_dir, "recognizers/96.71.txt"))
+#net = load(path.join(digits_dir, "recognizers/92.21.txt"))
 
 #Settings
-alpha = 0.04
+alpha = 0.03
 beta = 0.3
 
-#net.train_stochastic_momentum(train_x, train_y, alpha, beta, 60000, 10, True)
-#net.train_stochastic_momentum(test, alpha, beta, 10000, 10, True)
-net.train_vanilla(test, alpha, 10, True)
+#net.train_stochastic_momentum(train, alpha, beta, 60000, 10, True)
+net.train_stochastic(test, alpha, 1000, 100, True)
+#net.train_vanilla(test, alpha, 10, True)
 
 accuracy, avg_cost = test_recognizer(net, test)
 print(f'Accuracy: {round(100 * accuracy, 2)}% | Cost {round(avg_cost, 3)}')
-#net.save(f'recognizers/{round(100 * accuracy, 2)}.txt')
-
 
 inp = ''
 while inp != 'stop':
@@ -32,7 +30,7 @@ while inp != 'stop':
     if inp.split()[0] == 'train':
         if len(inp.split()) == 4:
             a, cycles, batch_size = inp.split()[1:]
-            #net.train_stochastic(train_x, train_y, float(a), int(cycles), int(batch_size), True)
+            #net.train_stochastic(train, float(a), int(cycles), int(batch_size), True)
         else:
             print(f'Train takes 3 arguments, but {len(inp.split())-1} was given')
     elif inp == 'test':
@@ -57,5 +55,5 @@ while inp != 'stop':
     elif inp.isdigit():
         pyplot.imshow(test[int(inp)].input_value.reshape(28, 28), cmap=pyplot.get_cmap('gray'))
         net.process(test[int(inp)].input_value)
-        print(f'{net.layer_results[-1].argmax() == test[int(inp)].input_value.argmax()} | Neuro: {net.layer_results[-1].argmax()} | Answer: {test[int(inp)].output_value.argmax()} | Cost: {round(net.cost(test[int(inp)].output_value), 3)} | Result: {net.layer_results[-1].round(3)}')
+        print(f'{net.layer_results[-1].argmax() == test[int(inp)].output_value.argmax()} | Neuro: {net.layer_results[-1].argmax()} | Answer: {test[int(inp)].output_value.argmax()} | Cost: {round(net.cost(test[int(inp)].output_value), 3)} | Result: {net.layer_results[-1].round(3)}')
         pyplot.show(block = False)
