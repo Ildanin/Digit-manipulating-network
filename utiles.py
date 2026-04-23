@@ -31,11 +31,11 @@ def test_recognizer(network: Network, dataset: Dataset) -> tuple[float, float]:
         if network.process(sample.input_value).argmax() == sample.output_value.argmax():
             score += 1
         cost += network.unaverage_cost(sample.output_value)
-    return(score / len(dataset), cost / len(dataset))
+    return(score / len(dataset), cost / (len(dataset) * network.info[-1]))
 
 def test_drawer(network: Network, dataset: Dataset) -> float:
     cost = 0
     for sample in dataset:
         network.process(sample.input_value)
         cost += network.unaverage_cost(sample.output_value)
-    return(cost / len(dataset))
+    return(cost / (len(dataset) * network.info[-1]))
