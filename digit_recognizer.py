@@ -4,22 +4,24 @@ from network import Network, Dataset, load, random_array
 from utiles import load_data, test_recognizer, digits_dir
 from os import path
 
-train = Dataset(*load_data("mnist_train.csv"))
+#train = Dataset(*load_data("mnist_train.csv"))
 test = Dataset(*load_data("mnist_test.csv"))
 
 net = Network([784, 100, 10], "L_ReLU", "softsign", weight_range=(-0.5, 0.5), bias_range=(-0.5, 0.5))
 
-net = load(path.join(digits_dir, "recognizers/85.78.txt"))
+#net = load(path.join(digits_dir, "recognizers/85.78.txt"))
 
 #Settings
-alpha = 0.05
+alpha = 0.1
 beta = 0.4
 
-#net.train_vanilla(test, alpha, 100, True)
-net.train_stochastic_momentum(test, alpha, beta, 100, 1000, True)
+net.train_vanilla(test, alpha, 10, True)
+#net.train_stochastic(test, alpha, 100, 1000, True)
+#net.train_momentum(test, alpha, beta, 10, True)
+#net.train_stochastic_momentum(test, alpha, beta, 100, 1000, True)
 
-accuracy, avg_cost = test_recognizer(net, test)
-print(f'Accuracy: {round(100 * accuracy, 2)}% | Cost {round(avg_cost, 3)}')
+accuracy, avg_loss = test_recognizer(net, test)
+print(f'Accuracy: {round(100 * accuracy, 2)}% | Loss {round(avg_loss, 3)}')
 
 inp = ''
 while inp != 'stop':
@@ -33,10 +35,10 @@ while inp != 'stop':
         else:
             print(f'Train takes 3 arguments, but {len(inp.split())-1} was given')
     elif inp == 'test':
-        accuracy, avg_cost = test_recognizer(net, test)
-        print(f'Accuracy: {round(100 * accuracy, 2)}% | Cost: {round(avg_cost, 3)}')
+        accuracy, avg_loss = test_recognizer(net, test)
+        print(f'Accuracy: {round(100 * accuracy, 2)}% | Loss: {round(avg_loss, 3)}')
     elif inp.split()[0] == 'save':
-        accuracy, avg_cost = test_recognizer(net, test)
+        accuracy, avg_loss = test_recognizer(net, test)
         net.save(f'recognizers/{round(100 * accuracy, 2)}.txt')
     elif all(char in 'q' for char in inp):
         for _ in range(len(inp)):
@@ -49,10 +51,10 @@ while inp != 'stop':
             rand = randint(0, 10000)
             pyplot.imshow(test[rand].input_value.reshape(28, 28), cmap=pyplot.get_cmap('gray'))
             net.process(test[rand].input_value)
-            print(f'{net.last_result.argmax() == test[rand].output_value.argmax()} | Neuro: {net.last_result.argmax()} | Answer: {test[rand].output_value.argmax()} | Cost: {round(net.cost(test[rand].output_value), 3)} | ID: {rand}')
+            print(f'{net.last_result.argmax() == test[rand].output_value.argmax()} | Neuro: {net.last_result.argmax()} | Answer: {test[rand].output_value.argmax()} | Loss: {round(net.loss(test[rand].output_value), 3)} | ID: {rand}')
         pyplot.show(block = False)
     elif inp.isdigit():
         pyplot.imshow(test[int(inp)].input_value.reshape(28, 28), cmap=pyplot.get_cmap('gray'))
         net.process(test[int(inp)].input_value)
-        print(f'{net.last_result.argmax() == test[int(inp)].output_value.argmax()} | Neuro: {net.last_result.argmax()} | Answer: {test[int(inp)].output_value.argmax()} | Cost: {round(net.cost(test[int(inp)].output_value), 3)} | Result: {net.last_result.round(3)}')
+        print(f'{net.last_result.argmax() == test[int(inp)].output_value.argmax()} | Neuro: {net.last_result.argmax()} | Answer: {test[int(inp)].output_value.argmax()} | Loss: {round(net.loss(test[int(inp)].output_value), 3)} | Result: {net.last_result.round(3)}')
         pyplot.show(block = False)
