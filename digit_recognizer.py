@@ -4,12 +4,12 @@ from network import Network, Dataset, load, random_array
 from utiles import load_data, test_recognizer, digits_dir
 from os import path
 
-#train = Dataset(*load_data("mnist_train.csv"))
+train = Dataset(*load_data("mnist_train.csv"))
 test = Dataset(*load_data("mnist_test.csv"))
 
 net = Network([784, 100, 10], "L_ReLU", "softsign", weight_range=(-0.5, 0.5), bias_range=(-0.5, 0.5))
 
-#net = load(path.join(digits_dir, "recognizers/85.78.txt"))
+net = load(path.join(digits_dir, "recognizers/85.78.txt"))
 
 #Settings
 alpha = 0.05
@@ -29,7 +29,7 @@ while inp != 'stop':
     if inp.split()[0] == 'train':
         if len(inp.split()) == 4:
             a, cycles, batch_size = inp.split()[1:]
-            #net.train_stochastic(train, float(a), int(cycles), int(batch_size), True)
+            net.train_stochastic(train, float(a), int(cycles), int(batch_size), True)
         else:
             print(f'Train takes 3 arguments, but {len(inp.split())-1} was given')
     elif inp == 'test':
