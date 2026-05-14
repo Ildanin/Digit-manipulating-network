@@ -7,9 +7,12 @@ from os import path
 #train = Dataset(*load_data("mnist_train.csv"))
 test = Dataset(*load_data("mnist_test.csv"))
 
-net = Network([784, 100, 10], "L_ReLU", "softsign", weight_range=(-0.5, 0.5), bias_range=(-0.5, 0.5))
+net = Network([("FC", 784, "L_ReLU"), 
+               ("FC", 100, "L_ReLU"), 
+               ("FC", 10, "softsign")], 
+               weight_range=(-0.5, 0.5), bias_range=(-0.5, 0.5))
 
-#net = load(path.join(digits_dir, "recognizers/85.78.txt"))
+#net = load(path.join(digits_dir, "recognizers/97.62.txt"))
 
 #Settings
 alpha = 0.1
