@@ -1,25 +1,26 @@
 from random import randint
 from matplotlib import pyplot
-from network import Network, Dataset, FC, load, random_array
+from network import Network, Dataset, FC, CN, load, random_array
 from utiles import load_data, test_recognizer, digits_dir
 from os import path
 
 #train = Dataset(*load_data("mnist_train.csv"))
 test = Dataset(*load_data("mnist_test.csv"))
 
-'''net = Network([FC(784), 
-               FC(100, "L_ReLU"), 
-               FC(10, "softsign")], 
-               weight_range=(-0.5, 0.5), bias_range=(-0.5, 0.5))'''
+'''net = Network((784,), [FC(100, "L_ReLU"), 
+                       FC(10, "softsign")], 
+              weights_range=(-0.5, 0.5), biases_range=(-0.5, 0.5))'''
 
-net = load(path.join(digits_dir, "recognizers/68.59.txt"))
+#net = Network((1, 28, 28), [CN(2, 2, "sigmoid"), FC(10, "softsign")])
+
+net = load(path.join(digits_dir, "recognizers/7.85.txt"))
 
 #Settings
 alpha = 0.1
 beta = 0.4
 
 #net.train_vanilla(test, alpha, 10, True)
-net.train_stochastic(test, alpha, 100, 1000, True)
+#net.train_stochastic(test, alpha, 100, 1000, True)
 #net.train_momentum(test, alpha, beta, 10, True)
 #net.train_stochastic_momentum(test, alpha, beta, 100, 1000, True)
 

@@ -17,7 +17,8 @@ def load_data(filename: str) -> tuple[list[np.ndarray], list[np.ndarray]]:
     file = open(path.join(digits_dir, filename))
     for line in file:
         data = [int(x) for x in line.split(',')]
-        file_x.append(np.array(data[1:]) / 255)
+        #file_x.append(np.array(data[1:]) / 255)
+        file_x.append(np.array(data[1:]).reshape((1,28,28)) / 255)
         file_y.append(np.array(data_transform(data[0])))
     file.close()
     t2 = perf_counter()
